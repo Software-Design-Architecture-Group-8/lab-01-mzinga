@@ -1,0 +1,1 @@
+window._env_ = {"TENANT":"local-tenant","PAYLOAD_PUBLIC_SERVER_URL":"http://localhost:3000"};
