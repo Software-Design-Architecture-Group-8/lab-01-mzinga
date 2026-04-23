@@ -18,9 +18,7 @@ const Communications: CollectionConfig = {
     delete: () => {
       return false;
     },
-    update: () => {
-      return false;
-    },
+    update: access.GetIsAdmin,
   },
   admin: {
     ...collectionUtils.GeneratePreviewConfig(),
@@ -34,7 +32,7 @@ const Communications: CollectionConfig = {
     afterChange: [
       async ({ doc }) => {
         const { tos, ccs, bccs, subject, body } = doc;
-        
+
         if (doc.status === "pending" || doc.status === "sent") {
           return doc;
         }
