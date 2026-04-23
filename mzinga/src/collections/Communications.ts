@@ -34,7 +34,19 @@ const Communications: CollectionConfig = {
     afterChange: [
       async ({ doc }) => {
         const { tos, ccs, bccs, subject, body } = doc;
-        if (process.env.COMMUNICATIONS_EXTERNAL_WORKER !== "true") {
+        
+        if (doc.status === "pending" || doc.status === "sent") {
+          return doc;
+        }
+
+        if (process.env.COMMUNICATIONS_EXTERNAL_WORKER === "true") {
+          await payload.update({
+            collection: Slugs.Communications,
+            id: doc.id,
+            data: { status: "pending" },
+          });
+          return doc;
+        }
         for (const part of body) {
           if (part.type !== "upload") {
             continue;
@@ -120,15 +132,7 @@ const Communications: CollectionConfig = {
           }
           throw err;
         }
-      } else {
-        payload.update({
-          collection: Slugs.Communications,
-          id: doc.id,
-          data: {
-            status: "pending",
-          },
-        });
-      }
+
       },
     ],
   },
